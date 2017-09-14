@@ -1,18 +1,17 @@
 %global srcname libsass
-%global libname libsass-python
-%global sum An example python module
 
 Name:           python-%{srcname}
 Version:        0.13.2
 Release:        1%{?dist}
-Summary:        %{sum}
+Summary:        Python bindings for libsass
 
 License:        MIT
-URL:            https://github.com/dahlia/%{libname}/releases
-Source0:        https://github.com/dahlia/%{libname}/releases/download/%{version}/libsass-%{version}.tar.gz
+URL:            https://github.com/dahlia/libsass-python
+Source0:        %{url}/releases/download/%{version}/%{srcname}-%{version}.tar.gz
 
-ExclusiveArch:  %{ix86} x86_64
-BuildRequires:  python2-devel python3-devel python2-six python3-six
+BuildRequires:  python2-devel python2-six
+BUildRequires:  python3-devel python3-six
+BuildRequires:  libsass-devel
 
 %description
 This package provides a simple Python extension module
@@ -24,8 +23,10 @@ install_requires list or requirements.txt file.
 Need no Ruby nor Node.js.
 
 %package -n python2-%{srcname}
-Summary:        %{sum}
+Summary:        %{summary}
 %{?python_provide:%python_provide python2-%{srcname}}
+
+Requires: libsass
 
 %description -n python2-%{srcname}
 This package provides a simple Python extension module
@@ -37,8 +38,10 @@ install_requires list or requirements.txt file.
 Need no Ruby nor Node.js.
 
 %package -n python3-%{srcname}
-Summary:        %{sum}
+Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{srcname}}
+
+Requires: libsass
 
 %description -n python3-%{srcname}
 This package provides a simple Python extension module
@@ -51,6 +54,9 @@ Need no Ruby nor Node.js.
 
 %prep
 %autosetup -n %{srcname}-%{version}
+rm -Rf libsass/
+sed -i 's/extra_link_args=link_flags,/extra_link_args=link_flags, libraries=["sass"],/' setup.py
+sed "s|#!/usr/bin/env python||" -i sassc.py
 
 %build
 %py2_build
@@ -59,35 +65,31 @@ Need no Ruby nor Node.js.
 %install
 %py2_install
 %py3_install
-sed "1d" -i %{buildroot}/%{python2_sitearch}/sassc.py
-sed "1d" -i %{buildroot}/%{python3_sitearch}/sassc.py
 
 %check
 %{__python2} setup.py test
 %{__python3} setup.py test
 
-# Note that there is no %%files section for the unversioned python module if we are building for several python runtimes
 %files -n python2-%{srcname}
-%license README.rst
-%doc README.rst PKG-INFO
+#%license 
+%doc README.rst
 %{python2_sitearch}/_sass.so
-%{python2_sitearch}/libsass-0.13.2-py2.7.egg-info/
+%{python2_sitearch}/libsass-0.13.2-py%{python2_version}.egg-info/*
 %{python2_sitearch}/sass.py*
 %{python2_sitearch}/sassc.py*
 %{python2_sitearch}/sasstests.py*
-%{python2_sitearch}/sassutils/
+%{python2_sitearch}/sassutils/*
 
 %files -n python3-%{srcname}
-%license README.rst
-%doc README.rst PKG-INFO
-%{python3_sitearch}/__pycache__/
-%{python3_sitearch}/_sass.cpython-36m-%{_arch}-linux-gnu.so
-%{python3_sitearch}/libsass-0.13.2-py3.6.egg-info/
+#%license
+%doc README.rst
+%{python3_sitearch}/__pycache__/*
+%{python3_sitearch}/_sass*.so
+%{python3_sitearch}/libsass-0.13.2-py%{python3_version}.egg-info/*
 %{python3_sitearch}/sass.py
 %{python3_sitearch}/sassc.py
 %{python3_sitearch}/sasstests.py
-%{python3_sitearch}/sassutils/
-
+%{python3_sitearch}/sassutils/*
 %{_bindir}/sassc
 %{_bindir}/sassc.py
 
