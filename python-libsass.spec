@@ -10,7 +10,7 @@ URL:            https://github.com/dahlia/libsass-python
 Source0:        %{url}/archive/%{version}.tar.gz#/%{srcname}-%{version}.tar.gz
 
 BuildRequires:  python2-devel python2-six python2-pytest python-werkzeug
-BUildRequires:  python3-devel python3-six python3-pytest python3-werkzeug
+BuildRequires:  python3-devel python3-six python3-pytest python3-werkzeug
 BuildRequires:  libsass-devel
 
 %description
@@ -26,7 +26,7 @@ Need no Ruby nor Node.js.
 Summary:        %{summary}
 %{?python_provide:%python_provide python2-%{srcname}}
 
-Requires: libsass python2-six
+Requires: python2-six
 
 %description -n python2-%{srcname}
 This package provides a simple Python extension module
@@ -41,7 +41,7 @@ Need no Ruby nor Node.js.
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{srcname}}
 
-Requires: libsass python3-six
+Requires: python3-six
 
 %description -n python3-%{srcname}
 This package provides a simple Python extension module
@@ -59,16 +59,9 @@ sed -i 's/extra_link_args=link_flags,/extra_link_args=link_flags, libraries=["sa
 sed "s|#!/usr/bin/env python||" -i sassc.py
 
 %build
-echo "#include <stdio.h>
-#include <sass/context.h>
-
-int main() {
-  puts(libsass_version());
-  return 0;
-}
-" > version.c
-gcc -Wall version.c -lsass -o version
-./version > .libsass-upstream-version
+# Because system libsass is used (not bundled), version from this file is not needed at all
+# so just an empty file is created.
+touch .libsass-upstream-version
 %py2_build
 %py3_build
 
@@ -77,13 +70,13 @@ gcc -Wall version.c -lsass -o version
 %py3_install
 
 %check
-export PYTHONPATH=%{buildroot}/%{python2_sitearch}
+export PYTHONPATH=%{buildroot}%{python2_sitearch}
 py.test-%{python2_version} sasstests.py
-export PYTHONPATH=%{buildroot}/%{python3_sitearch}
+export PYTHONPATH=%{buildroot}%{python3_sitearch}
 py.test-%{python3_version} sasstests.py
 
 %files -n python2-%{srcname}
-#%license 
+%license LICENSE
 %doc README.rst
 %{python2_sitearch}/_sass.so
 %{python2_sitearch}/libsass-0.13.2-py%{python2_version}.egg-info/*
@@ -93,7 +86,7 @@ py.test-%{python3_version} sasstests.py
 %{python2_sitearch}/sassutils/*
 
 %files -n python3-%{srcname}
-#%license
+%license LICENSE
 %doc README.rst
 %{python3_sitearch}/__pycache__/*
 %{python3_sitearch}/_sass*.so
