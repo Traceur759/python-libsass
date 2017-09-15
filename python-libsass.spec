@@ -7,10 +7,10 @@ Summary:        Python bindings for libsass
 
 License:        MIT
 URL:            https://github.com/dahlia/libsass-python
-Source0:        %{url}/releases/download/%{version}/%{srcname}-%{version}.tar.gz
+Source0:        %{url}/archive/%{version}.tar.gz#/%{srcname}-%{version}.tar.gz
 
-BuildRequires:  python2-devel python2-six
-BUildRequires:  python3-devel python3-six
+BuildRequires:  python2-devel python2-six python2-pytest python-werkzeug
+BUildRequires:  python3-devel python3-six python3-pytest python3-werkzeug
 BuildRequires:  libsass-devel
 
 %description
@@ -26,7 +26,7 @@ Need no Ruby nor Node.js.
 Summary:        %{summary}
 %{?python_provide:%python_provide python2-%{srcname}}
 
-Requires: libsass
+Requires: libsass python2-six
 
 %description -n python2-%{srcname}
 This package provides a simple Python extension module
@@ -41,7 +41,7 @@ Need no Ruby nor Node.js.
 Summary:        %{summary}
 %{?python_provide:%python_provide python3-%{srcname}}
 
-Requires: libsass
+Requires: libsass python3-six
 
 %description -n python3-%{srcname}
 This package provides a simple Python extension module
@@ -53,12 +53,22 @@ install_requires list or requirements.txt file.
 Need no Ruby nor Node.js.
 
 %prep
-%autosetup -n %{srcname}-%{version}
+%autosetup -n %{srcname}-python-%{version}
 rm -Rf libsass/
 sed -i 's/extra_link_args=link_flags,/extra_link_args=link_flags, libraries=["sass"],/' setup.py
 sed "s|#!/usr/bin/env python||" -i sassc.py
 
 %build
+echo "#include <stdio.h>
+#include <sass/context.h>
+
+int main() {
+  puts(libsass_version());
+  return 0;
+}
+" > version.c
+gcc -Wall version.c -lsass -o version
+./version > .libsass-upstream-version
 %py2_build
 %py3_build
 
@@ -67,8 +77,10 @@ sed "s|#!/usr/bin/env python||" -i sassc.py
 %py3_install
 
 %check
-%{__python2} setup.py test
-%{__python3} setup.py test
+export PYTHONPATH=%{buildroot}/%{python2_sitearch}
+py.test-%{python2_version} sasstests.py
+export PYTHONPATH=%{buildroot}/%{python3_sitearch}
+py.test-%{python3_version} sasstests.py
 
 %files -n python2-%{srcname}
 #%license 
@@ -96,4 +108,5 @@ sed "s|#!/usr/bin/env python||" -i sassc.py
 %changelog
 * Tue Sep 12 2017 Marcel Plch <gmarcel.plch@gmail.com> - 0.13.2
 - Initial version of the package
+
 
