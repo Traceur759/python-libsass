@@ -16,11 +16,7 @@ BuildRequires:  libsass-devel
 %description
 This package provides a simple Python extension module
 sass which is binding Libsass (written in C/C++ by Hampton
-Catlin and Aaron Leung). It’s very straightforward and
-there isn’t any headache related Python distribution/deployment.
-That means you can add just libsass into your setup.py’s
-install_requires list or requirements.txt file.
-Need no Ruby nor Node.js.
+Catlin and Aaron Leung).
 
 %package -n python2-%{srcname}
 Summary:        %{summary}
@@ -31,11 +27,7 @@ Requires: python2-six
 %description -n python2-%{srcname}
 This package provides a simple Python extension module
 sass which is binding Libsass (written in C/C++ by Hampton
-Catlin and Aaron Leung). It’s very straightforward and
-there isn’t any headache related Python distribution/deployment.
-That means you can add just libsass into your setup.py’s
-install_requires list or requirements.txt file.
-Need no Ruby nor Node.js.
+Catlin and Aaron Leung).
 
 %package -n python3-%{srcname}
 Summary:        %{summary}
@@ -46,22 +38,18 @@ Requires: python3-six
 %description -n python3-%{srcname}
 This package provides a simple Python extension module
 sass which is binding Libsass (written in C/C++ by Hampton
-Catlin and Aaron Leung). It’s very straightforward and
-there isn’t any headache related Python distribution/deployment.
-That means you can add just libsass into your setup.py’s
-install_requires list or requirements.txt file.
-Need no Ruby nor Node.js.
+Catlin and Aaron Leung).
 
 %prep
 %autosetup -n %{srcname}-python-%{version}
 rm -Rf libsass/
 sed -i 's/extra_link_args=link_flags,/extra_link_args=link_flags, libraries=["sass"],/' setup.py
 sed "s|#!/usr/bin/env python||" -i sassc.py
-
-%build
 # Because system libsass is used (not bundled), version from this file is not needed at all
 # so just an empty file is created.
 touch .libsass-upstream-version
+
+%build
 %py2_build
 %py3_build
 
@@ -96,10 +84,9 @@ py.test-%{python3_version} sasstests.py
 %{python3_sitearch}/sasstests.py
 %{python3_sitearch}/sassutils/*
 %{_bindir}/sassc
-%{_bindir}/sassc.py
+%exclude %{_bindir}/sassc.py
 
 %changelog
 * Tue Sep 12 2017 Marcel Plch <gmarcel.plch@gmail.com> - 0.13.2
 - Initial version of the package
-
 
