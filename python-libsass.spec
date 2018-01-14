@@ -56,7 +56,7 @@ export SYSTEM_SASS="true"
 pushd docs
 PLATFORM=$(python3 -c "import sysconfig; print(sysconfig.get_platform())")
 export PYTHONPATH=../build/lib.${PLATFORM}-%{python3_version}
-make man SPHINXBUILD=sphinx-build-3
+make man    SPHINXBUILD=sphinx-build-3
 popd
 
 %install
@@ -64,7 +64,7 @@ popd
 export SYSTEM_SASS="true"
 %py2_install
 %py3_install
-install -D %{_builddir}/%{srcname}-python-%{version}/docs/_build/man/pysassc.1 %{buildroot}%{_mandir}/man1/pysassc.1
+install -D docs/_build/man/pysassc.1 %{buildroot}%{_mandir}/man1/pysassc.1
 
 %check
 export PYTHONPATH=%{buildroot}%{python2_sitearch}
