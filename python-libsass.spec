@@ -1,7 +1,7 @@
 %global srcname libsass
 
 Name:           python-%{srcname}
-Version:        0.13.4
+Version:        0.14.5
 Release:        1%{?dist}
 Summary:        Python bindings for libsass
 
@@ -64,7 +64,9 @@ popd
 export SYSTEM_SASS="true"
 %py2_install
 %py3_install
-install -D docs/_build/man/pysassc.1 %{buildroot}%{_mandir}/man1/pysassc.1
+install -m 644 -D docs/_build/man/pysassc.1 %{buildroot}%{_mandir}/man1/pysassc.1
+chmod 755 %{buildroot}%{python2_sitearch}/sassc.py
+chmod 755 %{buildroot}%{python3_sitearch}/sassc.py
 
 %check
 export PYTHONPATH=%{buildroot}%{python2_sitearch}
@@ -98,6 +100,6 @@ py.test-%{python3_version} sasstests.py
 %exclude %{_bindir}/sassc.py
 
 %changelog
-* Thu Jan 11 2018 Marcel Plch <gmarcel.plch@gmail.com> - 0.13.4
+* Thu Jan 11 2018 Marcel Plch <gmarcel.plch@gmail.com> - 0.14.5
 - Initial version of the package
 
