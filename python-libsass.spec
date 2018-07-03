@@ -60,7 +60,7 @@ chmod 755 %{buildroot}%{python3_sitearch}/sassc.py
 
 %check
 export PYTHONPATH=%{buildroot}%{python3_sitearch}
-py.test-%{python3_version} sasstests.py
+py.test-3 sasstests.py
 
 %files -n python3-%{srcname}
 %license LICENSE
