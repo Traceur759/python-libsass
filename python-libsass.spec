@@ -37,6 +37,7 @@ Catlin and Aaron Leung).
 
 %prep
 %autosetup -n %{srcname}-python-%{version} -p1
+pathfix.py -i %{__python3} -p -n sassc.py
 
 %build
 # Export SYSTEM_SASS environment variable to use the
