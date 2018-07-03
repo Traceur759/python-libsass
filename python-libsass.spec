@@ -44,7 +44,10 @@ Catlin and Aaron Leung).
 export SYSTEM_SASS="true"
 %py3_build
 pushd docs
-export PYTHONPATH=../build/lib.%{python3_platform}-%{python3_version}
+# There are differences between Python's naming of arches and the
+# %%{_arch} macro. We need to ask Python for the platform name
+PLATFORM=$(python3 -c "import sysconfig; print(sysconfig.get_platform())")
+export PYTHONPATH=../build/lib.${PLATFORM}-%{python3_version}
 make man    SPHINXBUILD=sphinx-build-3
 popd
 
