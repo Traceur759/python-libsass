@@ -37,7 +37,7 @@ Catlin and Aaron Leung).
 
 %prep
 %autosetup -n %{srcname}-python-%{version} -p1
-pathfix.py -i %{__python3} -p -n sassc.py
+sed -i -e '/^#!\//, 1d' sassc.py
 
 %build
 # Export SYSTEM_SASS environment variable to use the
@@ -57,7 +57,6 @@ popd
 export SYSTEM_SASS="true"
 %py3_install
 install -m 644 -D docs/_build/man/pysassc.1 %{buildroot}%{_mandir}/man1/pysassc.1
-chmod 755 %{buildroot}%{python3_sitearch}/sassc.py
 
 %check
 export PYTHONPATH=%{buildroot}%{python3_sitearch}
